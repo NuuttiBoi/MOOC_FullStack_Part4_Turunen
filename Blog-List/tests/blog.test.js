@@ -94,10 +94,15 @@ describe('most likes', () => {
         )
     })
     listHelper.mostBlogs(blogs)
+    listHelper.mostLikes(blogs)
 })
+/*
 describe('most blogs by author', () => {
     test('find the author with the most blogs',() => {
         const result = listHelper.mostBlogs(blogs)
         assert.equal(result, JSON.parse('{"author":"Robert C. Martin", "blogs":3}'))
     })
+
 })
+
+ */

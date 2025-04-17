@@ -32,18 +32,19 @@ const mostBlogs = (blogs) => {
     return JSON.parse(`{"author":"${mostFreq}","blogs":${maxCount}}`)
 }
 const mostLikes = (blogs) => {
-    const freq = {}
-    let maxCount = 0
-    let mostFreq = 0
+    const authors = new Map()
+    const reducer = (sum, blog) => {
+        return sum + blog.likes
+    }
     for(let blog of blogs) {
-        freq[blog.author] = (freq[blog.author] || 0) + 1
-        if(freq[blog.likes] > maxCount) {
-            maxCount = freq[blog.likes]
-            mostFreq = blog.author
+        if(authors && authors.has(blog.author)) {
+            authors.get(blog.author).likes += blog.likes
+        } else {
+            authors.set(blog.author, {likes: blog.likes})
         }
     }
-    return JSON.parse(`{"author":"${mostFreq}","blogs":${maxCount}}`)
+    console.log(authors)
 }
 module.exports = {
-    dummy, totalLikes, favoriteBlogs, mostBlogs
+    dummy, totalLikes, favoriteBlogs, mostBlogs, mostLikes
 }
