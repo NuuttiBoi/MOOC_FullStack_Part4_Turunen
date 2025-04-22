@@ -33,9 +33,6 @@ const mostBlogs = (blogs) => {
 }
 const mostLikes = (blogs) => {
     const authors = new Map()
-    const reducer = (sum, blog) => {
-        return sum + blog.likes
-    }
     for(let blog of blogs) {
         if(authors && authors.has(blog.author)) {
             authors.get(blog.author).likes += blog.likes
@@ -43,7 +40,12 @@ const mostLikes = (blogs) => {
             authors.set(blog.author, {likes: blog.likes})
         }
     }
-    console.log(authors)
+    const mostLikedAuthor = [...authors].reduce((max, [author, data]) => {
+        return data.likes > max.likes ? {author: author, likes: data.likes}
+            :max
+    }, {author: null, likes: 0 })
+    console.log(mostLikedAuthor)
+    return mostLikedAuthor
 }
 module.exports = {
     dummy, totalLikes, favoriteBlogs, mostBlogs, mostLikes

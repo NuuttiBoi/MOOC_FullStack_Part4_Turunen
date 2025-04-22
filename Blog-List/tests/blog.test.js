@@ -1,6 +1,7 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
+const listhelper = require("../utils/list_helper");
 
 const listWithOneBlog = [
     {
@@ -79,7 +80,7 @@ describe('total likes', () => {
         assert.strictEqual(result, 36)
     })
 })
-describe('most likes', () => {
+describe('most liked blog', () => {
     test('find the blog with most likes', () => {
         const result = listHelper.favoriteBlogs(blogs)
         assert.deepStrictEqual(result,
@@ -96,13 +97,17 @@ describe('most likes', () => {
     listHelper.mostBlogs(blogs)
     listHelper.mostLikes(blogs)
 })
-/*
+describe('most liked author', () => {
+    test('find the author with most likes', () => {
+        const result = listHelper.mostLikes(blogs)
+        assert.deepStrictEqual(result, JSON.parse('{"author":"Edsger W. Dijkstra", "likes":17}'))
+    })
+})
+
 describe('most blogs by author', () => {
     test('find the author with the most blogs',() => {
         const result = listHelper.mostBlogs(blogs)
-        assert.equal(result, JSON.parse('{"author":"Robert C. Martin", "blogs":3}'))
+        assert.deepStrictEqual(result, JSON.parse('{"author":"Robert C. Martin", "blogs":3}'))
     })
-
 })
 
- */
