@@ -5,6 +5,7 @@ const app = express()
 
 const Blog = require("./models/blog")
 const {totalLikes} = require("./utils/list_helper");
+const logger = require("./utils/logger")
 
 app.use(express.json())
 
@@ -15,7 +16,7 @@ app.get('/', (request, response) => {
 
 app.get('/api/blogs', (request, response) => {
     Blog.find({}).then((blogs) => {
-        console.log(totalLikes(blogs))
+        logger.info(totalLikes(blogs))
         response.json(blogs)
     })
 })
@@ -29,5 +30,5 @@ app.post('/api/blogs', (request, response) => {
 
 const PORT = 3003
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    logger.info(`Server running on port ${PORT}`)
 })
