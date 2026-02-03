@@ -1,8 +1,11 @@
 const mongoose = require('mongoose')
 const mongoUrl = process.env.MONGODB_URI
+/*
 mongoose.connect(mongoUrl).then(() => {
     console.log('MongoDB Connected!')
 } )
+
+ */
 
 const blogSchema =new mongoose.Schema({
     title: String,
