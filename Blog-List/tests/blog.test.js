@@ -2,10 +2,20 @@ const { test, describe, beforeEach, after } = require('node:test')
 const supertest = require('supertest')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
-const app = require('../index')
+const app = require('../app')
 const mongoose = require("mongoose");
+const helper = require('./test_helper')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
+
+beforeEach(async () => {
+    await Blog.deleteMany({})
+    let blogObject = new Blog(helper.initialBlogs[0])
+    await blogObject.save()
+    blogObject = new Blog(helper.initialBlogs[1])
+    await blogObject.save()
+})
 
 const listWithOneBlog = [
     {
@@ -115,12 +125,67 @@ describe('most blogs by author', () => {
     })
 })
 
-describe('blogs are returned as json', () => {
-    test('blogs are returned as json', async () => {
+describe.only('blogs are returned as json', () => {
+    test.only('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
             .expect(200)
             .expect('Content-type', /application\/json/)
+    })
+})
+describe.only('unique identifier property of the blog posts is named id', () =>{
+    test.only('unique identifier property of the blog posts is named id', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+    })
+})
+
+describe.only('making an HTTP POST request to the /api/blogs URL successfully creates a new blog post',  () => {
+    const newBlog = {
+        title: "testing new blog post !!!",
+        author: "nuutti",
+        url: "okok",
+        likes: 2
+    }
+
+    test.only('test that a valid blog can be added and saved, and it increases the number of blogs', async () => {
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length+1)
+
+        const titles = blogsAtEnd.map(r => r.title)
+        assert(titles.includes('testing new blog post !!!'))
+
+    })
+
+})
+
+describe.only('if a new note that is added is missing the likes property, it will default to 0', () => {
+    test.only('verify that missing likes property will cause it to default to 0', async () => {
+        const newBlogWithNoLikes = {
+            title: "No likes blog.",
+            author: "nuutti",
+            url: "ok.com"
+        }
+        await api
+            .post('/api/blogs')
+            .send(newBlogWithNoLikes)
+            .expect(201)
+            .expect('Content-type', /application\/json/)
+        const blogsInDb = await helper.blogsInDb()
+        const blogWithLikesMissing = blogsInDb[2] //initially only 2 blogs in db, now new blog should be third
+        const result = await api
+            .get(`/api/blogs/${blogWithLikesMissing.id}`)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+        assert.strictEqual(result.body.likes, 0)
     })
 })
 
