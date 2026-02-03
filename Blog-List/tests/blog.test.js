@@ -1,8 +1,11 @@
-const { test, describe } = require('node:test')
+const { test, describe, beforeEach, after } = require('node:test')
 const supertest = require('supertest')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
+const app = require('../index')
+const mongoose = require("mongoose");
 
+const api = supertest(app)
 
 const listWithOneBlog = [
     {
@@ -112,3 +115,15 @@ describe('most blogs by author', () => {
     })
 })
 
+describe('blogs are returned as json', () => {
+    test('blogs are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+    })
+})
+
+after(async() => {
+    await mongoose.connection.close()
+})
