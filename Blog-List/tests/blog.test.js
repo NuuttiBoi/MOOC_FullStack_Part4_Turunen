@@ -189,6 +189,42 @@ describe.only('if a new note that is added is missing the likes property, it wil
     })
 })
 
+describe.only('verify that if the title or url properties are missing from the request data,' +
+    ' the backend responds to the request with the status code 400 Bad Request.', () => {
+    test.only('title missing from request data, should respond with status 400', async () => {
+        const blogWithNoTitle = {
+            author: "nuutti",
+            url: "ok.com",
+            likes: 2
+        }
+        await api
+            .post('/api/blogs')
+            .send(blogWithNoTitle)
+            .expect(400)
+    })
+    test.only('url missing from request data, should respond with status 400', async () => {
+        const blogWithNoUrl = {
+            title: "blog with no url",
+            author: "nuutti",
+            likes: 3
+        }
+        await api
+            .post('/api/blogs')
+            .send(blogWithNoUrl)
+            .expect(400)
+    })
+    test.only('both url and title missing, should respond with status 400', async () => {
+        const blogWithNoTitleAndUrl = {
+            author: "nuutti",
+            likes: 4
+        }
+        await api
+            .post('/api/blogs')
+            .send(blogWithNoTitleAndUrl)
+            .expect(400)
+    })
+})
+
 after(async() => {
     await mongoose.connection.close()
 })
