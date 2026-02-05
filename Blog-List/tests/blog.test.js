@@ -225,6 +225,71 @@ describe.only('verify that if the title or url properties are missing from the r
     })
 })
 
+describe.only('test that updating a blog post works', () => {
+    test.only('updating a blog post', async () => {
+        const newBlogPost = {
+            title: "old blog post",
+            author: "author",
+            url: "url",
+            likes: 4
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlogPost)
+            .expect(201)
+            .expect('Content-type',/application\/json/)
+
+        const updatedBlogPost = {
+            title: "updated blog post",
+            author: "new author",
+            url: "new url",
+            likes: 5
+        }
+        const blogsInDb = await helper.blogsInDb()
+        const newBlogInDb = blogsInDb[2]
+
+        console.log(blogsInDb)
+
+        await api
+            .put(`/api/blogs/${newBlogInDb.id}`)
+            .send(updatedBlogPost)
+            .expect(200)
+            .expect('Content-type',/application\/json/)
+
+        const fetchUpdatedNode = await api
+            .get(`/api/blogs/${newBlogInDb.id}`)
+            .expect(200)
+            .expect('Content-type',/application\/json/)
+
+        assert.strictEqual(fetchUpdatedNode.body.likes, 5)
+    })
+})
+
+describe.only('verify that deleting a single blog post works', () => {
+    test.only('', async () => {
+        const newBlogToDeleted = {
+            title: "blog to be deleted",
+            author: "author",
+            url: "url",
+            likes: 5
+        }
+        await api
+            .post('/api/blogs')
+            .send(newBlogToDeleted)
+            .expect(201)
+            .expect('Content-type', /application\/json/)
+        const blogsInDbBefore = await helper.blogsInDb()
+        const blogToBeDeleted = blogsInDbBefore[2]
+        await api
+            .delete(`/api/blogs/${blogToBeDeleted.id}`)
+            .expect(204)
+        const blogsInDbAfter = await helper.blogsInDb()
+
+        assert.strictEqual(blogsInDbAfter.length, blogsInDbBefore.length - 1)
+    })
+})
+
 after(async() => {
     await mongoose.connection.close()
 })

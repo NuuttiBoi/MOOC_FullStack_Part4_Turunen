@@ -11,7 +11,8 @@ const initialBlogs = [
     {
         "title": "testi 2",
         "author": "nuutti t",
-        "url": "okok"
+        "url": "okok",
+        "likes": 3
     }
 ]
 const blogsInDb = async () => {
